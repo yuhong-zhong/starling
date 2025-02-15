@@ -34,3 +34,5 @@ target_link_libraries(search_memory_index_dynamic ${PROJECT_NAME} ${DISKANN_TOOL
 
 add_executable(search_disk_index_save_freq search_disk_index_save_freq.cpp)
 target_link_libraries(search_disk_index_save_freq ${PROJECT_NAME} ${DISKANN_ASYNC_LIB} ${DISKANN_TOOLS_TCMALLOC_LINK_OPTIONS} Boost::program_options)
+
+add_executable(change_num_points change_num_points.cpp)

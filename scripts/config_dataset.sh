@@ -2,6 +2,19 @@
 
 # Switch dataset in the config_local.sh file by calling the desired function
 
+dataset_spacev1b_100m() {
+  BASE_PATH=/users/yuhong/nvme1n1/SPTAG/datasets/SPACEV1B/vectors.bin/vectors_merged.bin
+  QUERY_FILE=/users/yuhong/nvme1n1/SPTAG/datasets/SPACEV1B/query.bin
+  GT_FILE=/users/yuhong/nvme1n1/SPTAG/datasets/SPACEV1B/truth.bin
+  PREFIX=spacev1b_100m
+  DATA_TYPE=int8
+  DIST_FN=l2
+  B=3.25  # 32B PQ compression
+  K=10
+  DATA_DIM=100
+  DATA_N=100000000
+}
+
 #################
 #   BIGANN10M   #
 #################
