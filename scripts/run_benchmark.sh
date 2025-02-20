@@ -129,11 +129,12 @@ case $2 in
       OLD_INDEX_FILE=${INDEX_PREFIX_PATH}_disk.index
     fi
     #using sq index file to gp
-    GP_DATA_TYPE=$DATA_TYPE
-    if [ $USE_SQ -eq 1 ]; then 
-      OLD_INDEX_FILE=${INDEX_PREFIX_PATH}_disk.index
-      GP_DATA_TYPE=uint8
-    fi
+    # GP_DATA_TYPE=$DATA_TYPE
+    # if [ $USE_SQ -eq 1 ]; then 
+    #   OLD_INDEX_FILE=${INDEX_PREFIX_PATH}_disk.index
+    #   GP_DATA_TYPE=uint8
+    # fi
+    GP_DATA_TYPE=uint8
     GP_FILE_PATH=${GP_PATH}_part.bin
     echo "Running graph partition... ${GP_FILE_PATH}.log"
     if [ ${GP_USE_FREQ} -eq 1 ]; then
