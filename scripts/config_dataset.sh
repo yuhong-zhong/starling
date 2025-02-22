@@ -5,7 +5,7 @@
 dataset_spacev1b_100m() {
   BASE_PATH=/users/yuhong/nvme1n1/SPTAG/datasets/SPACEV1B/vectors.bin/vectors_merged.bin
   QUERY_FILE=/users/yuhong/nvme1n1/SPTAG/datasets/SPACEV1B/query.bin
-  GT_FILE=/users/yuhong/nvme1n1/SPTAG/datasets/SPACEV1B/truth.bin
+  GT_FILE=/users/yuhong/nvme1n1/SPTAG/datasets/SPACEV1B/truth_100m.bin
   PREFIX=spacev1b_100m
   DATA_TYPE=int8
   DIST_FN=l2
