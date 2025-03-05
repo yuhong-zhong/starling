@@ -24,15 +24,15 @@ USE_SQ=0
 MEM_R=64
 MEM_BUILD_L=128
 MEM_ALPHA=1.2
-MEM_RAND_SAMPLING_RATE=0.01  # randomly sample 1% to construct in-memory graph
-MEM_USE_FREQ=0
-MEM_FREQ_USE_RATE=0.01
+MEM_RAND_SAMPLING_RATE=0.02
+MEM_USE_FREQ=1
+MEM_FREQ_USE_RATE=0.02
 
 ##########################
 #   Generate Frequency   #
 ##########################
 FREQ_QUERY_FILE=$QUERY_FILE
-FREQ_QUERY_CNT=0 # Set 0 to use all (default)
+FREQ_QUERY_CNT=1000
 FREQ_BM=4
 FREQ_L=100 # only support one value at a time for now
 FREQ_T=16
