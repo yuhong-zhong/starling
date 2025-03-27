@@ -4,7 +4,11 @@
 
 dataset_spacev1b_100m() {
   BASE_PATH=~/new_partition/SPTAG/datasets/SPACEV1B/vectors.bin/vectors_merged.bin
+<<<<<<< Updated upstream
   QUERY_FILE=~/new_partition/SPTAG/datasets/SPACEV1B/query.bin
+=======
+  QUERY_FILE=~new_partition/SPTAG/datasets/SPACEV1B/query.bin
+>>>>>>> Stashed changes
   GT_FILE=~/new_partition/SPTAG/datasets/SPACEV1B/truth_100m.bin
   PREFIX=spacev1b_100m
   DATA_TYPE=int8
