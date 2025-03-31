@@ -9,13 +9,13 @@ NC='\033[0m'
 rm -f $SUMMARY_PATH
 
 # Parameter values to test
-MEM_USE_FREQ=0
+MEM_USE_FREQ=1
+CACHE=0
 SAMPLING_RATE=0.01
-FREQ_QUERY_CNT=0
-FREQ_QUERY_FILE="~/new_partitions/SPTAG/datasets/query_partitions/query_part_1.bin"
-
+FREQ_QUERY_CNT=20000
+QUERY_FILE="~/new_partitions/SPTAG/datasets/query_partitions/query_part_1.bin"
+MEM_FREQ_USE_RATES=(0.1 0.01 0.001 0.0001)
 # Cache values to test
-CACHE_VALUES=(10000)
 # (10000000 1000000 100000 10000)
 
 
@@ -23,13 +23,14 @@ CACHE_VALUES=(10000)
 cp config_local.sh config_local.sh.bak
 
 # Experiment with different cache values
-for CACHE in "${CACHE_VALUES[@]}"; do
+for MEM_FREQ_USE_RATE in "${MEM_FREQ_USE_RATES[@]}"; do
     # Update config_local.sh with different values
     sed -i "s/^MEM_RAND_SAMPLING_RATE=.*/MEM_RAND_SAMPLING_RATE=$SAMPLING_RATE/" config_local.sh
     sed -i "s/^FREQ_QUERY_CNT=.*/FREQ_QUERY_CNT=$FREQ_QUERY_CNT/" config_local.sh
     sed -i "s/^MEM_USE_FREQ=.*/MEM_USE_FREQ=$MEM_USE_FREQ/" config_local.sh
+    sed -i "s/^MEM_FREQ_USE_RATE=.*/MEM_FREQ_USE_RATE=$MEM_FREQ_USE_RATES/" config_local.sh
     sed -i "s/^CACHE=.*/CACHE=$CACHE/" config_local.sh
-    sed -i "s/^FREQ_QUERY_FILE=.*/CACHE=$FREQ_QUERY_FILE/" config_local.sh
+    cat config_dataset.sh | sed "s|QUERY_FILE=.*|QUERY_FILE=${FREQ_QUERY_FILE}|g" > $EXPERIMENT_DIR/config_dataset.sh
 
     # Output the current settings
     printf "${GREEN}Running with MEM_USE_FREQ=$MEM_USE_FREQ, FREQ_QUERY_CNT=$FREQ_QUERY_CNT, CACHE=$CACHE${NC}\n"
