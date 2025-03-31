@@ -24,7 +24,7 @@ USE_SQ=0
 MEM_R=64
 MEM_BUILD_L=128
 MEM_ALPHA=1.2
-MEM_RAND_SAMPLING_RATE=0.02
+MEM_RAND_SAMPLING_RATE=0.01
 MEM_USE_FREQ=0
 MEM_FREQ_USE_RATE=0.02
 
@@ -55,7 +55,7 @@ GP_CUT=4096 # the graph's degree will been limited at 4096
 ##############
 BM_LIST=(4)
 T_LIST=(8)
-CACHE=0 # diskann caching
+CACHE=10000
 MEM_L=1 # non-zero to enable in-memory graph
 
 # Page Search
