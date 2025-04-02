@@ -28,7 +28,7 @@ for MEM_FREQ_USE_RATE in "${MEM_FREQ_USE_RATES[@]}"; do
     sed -i "s/^MEM_RAND_SAMPLING_RATE=.*/MEM_RAND_SAMPLING_RATE=$SAMPLING_RATE/" config_local.sh
     sed -i "s/^FREQ_QUERY_CNT=.*/FREQ_QUERY_CNT=$FREQ_QUERY_CNT/" config_local.sh
     sed -i "s/^MEM_USE_FREQ=.*/MEM_USE_FREQ=$MEM_USE_FREQ/" config_local.sh
-    sed -i "s/^MEM_FREQ_USE_RATE=.*/MEM_FREQ_USE_RATE=$MEM_FREQ_USE_RATES/" config_local.sh
+    sed -i "s/^MEM_FREQ_USE_RATE=.*/MEM_FREQ_USE_RATE=$MEM_FREQ_USE_RATE/" config_local.sh
     sed -i "s/^CACHE=.*/CACHE=$CACHE/" config_local.sh
     cat config_dataset.sh | sed "s|QUERY_FILE=.*|QUERY_FILE=${FREQ_QUERY_FILE}|g" > $EXPERIMENT_DIR/config_dataset.sh
 
