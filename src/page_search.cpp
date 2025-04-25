@@ -5,6 +5,7 @@
 #include "percentile_stats.h"
 #include "pq_flash_index.h"
 #include "timer.h"
+#include <fstream>
 
 namespace diskann {
   template<typename T>
@@ -129,12 +130,16 @@ namespace diskann {
                        dists_out);
     };
 
+    std::ofstream outfile;
+    outfile.open("_starling_trace.txt", std::ios_base::app);
+
     auto compute_extact_dists_and_push = [&](const char* node_buf, const unsigned id) -> float {
       T *node_fp_coords_copy = data_buf;
       memcpy(node_fp_coords_copy, node_buf, disk_bytes_per_point);
       float cur_expanded_dist = dist_cmp->compare(query, node_fp_coords_copy,
                                             (unsigned) aligned_dim);
       full_retset.push_back(Neighbor(id, cur_expanded_dist, true));
+      outfile << id << "," << cur_expanded_dist << std::endl;
       return cur_expanded_dist;
     };
 
@@ -387,6 +392,8 @@ namespace diskann {
     if (stats != nullptr) {
       stats->total_us = (double) query_timer.elapsed();
     }
+    outfile<<std::endl;
+    outfile.close();
   }
 
   template<typename T>

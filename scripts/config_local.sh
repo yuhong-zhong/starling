@@ -54,7 +54,7 @@ GP_CUT=4096 # the graph's degree will been limited at 4096
 #   Search   #
 ##############
 BM_LIST=(4)
-T_LIST=(8)
+T_LIST=(1)
 CACHE=0 # diskann caching
 MEM_L=1 # non-zero to enable in-memory graph
 
