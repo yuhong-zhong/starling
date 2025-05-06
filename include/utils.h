@@ -63,7 +63,7 @@ typedef int FileHandle;
 #define IS_512_ALIGNED(X) IS_ALIGNED(X, 512)
 #define IS_4096_ALIGNED(X) IS_ALIGNED(X, 4096)
 #define METADATA_SIZE \
-  4096  // all metadata of individual sub-component files is written in first
+  8192  // all metadata of individual sub-component files is written in first
         // 4KB for unified files
 
 #define BUFFER_SIZE_FOR_CACHED_IO (_u64) 1024 * (_u64) 1048576

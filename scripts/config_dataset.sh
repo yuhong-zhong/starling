@@ -15,6 +15,19 @@ dataset_spacev1b_100m() {
   DATA_N=100000000
 }
 
+dataset_chunked_linux() {
+  BASE_PATH=/users/yuhong/new_partition/dataset_linux/float32_dataset_SFR-Embedding-Code-400M_chunked_linux.bin
+  QUERY_FILE=/users/yuhong/new_partition/dataset_linux/float32_query_SFR-Embedding-Code-400M_chunked_linux.bin
+  GT_FILE=/users/yuhong/new_partition/dataset_linux/float32_gt100_SFR-Embedding-Code-400M_chunked_linux.bin
+  PREFIX=chunked_linux
+  DATA_TYPE=float
+  DIST_FN=cosine
+  B=0.193  # 256B PQ compression
+  K=10
+  DATA_DIM=1024
+  DATA_N=808908
+}
+
 #################
 #   BIGANN10M   #
 #################

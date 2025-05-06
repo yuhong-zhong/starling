@@ -7,7 +7,7 @@
 #include <iostream>
 #include "utils.h"
 
-#define SECTOR_LEN 4096
+#define SECTOR_LEN 8192
 
 void WindowsAlignedFileReader::open(const std::string& fname) {
   m_filename = std::wstring(fname.begin(), fname.end());

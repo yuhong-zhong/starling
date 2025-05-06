@@ -29,7 +29,7 @@
 #include "pq_flash_index.h"
 #include "aux_utils.h"
 
-#define READ_SECTOR_LEN (size_t) 4096
+#define READ_SECTOR_LEN (size_t) 8192
 #define READ_SECTOR_OFFSET(node_id)                            \
   ((_u64) node_id / nnodes_per_sector + 1) * READ_SECTOR_LEN + \
       ((_u64) node_id % nnodes_per_sector) * max_node_len
