@@ -9,6 +9,7 @@
 #include <shared_mutex>
 #include <sstream>
 #include <string>
+#include <unordered_map>
 #include "tsl/robin_set.h"
 #include "tsl/robin_map.h"
 
@@ -872,7 +873,7 @@ namespace diskann {
       std::vector<Neighbor> &best_L_nodes, std::vector<unsigned> &des,
       tsl::robin_set<unsigned> &inserted_into_pool_rs,
       boost::dynamic_bitset<> &inserted_into_pool_bs, bool ret_frozen,
-      bool search_invocation) {
+      bool search_invocation, std::unordered_map<unsigned, int32_t> occurrences) {
     for (unsigned i = 0; i < Lsize + 1; i++) {
       best_L_nodes[i].distance = std::numeric_limits<float>::max();
     }
@@ -915,11 +916,13 @@ namespace diskann {
         if (inserted_into_pool_bs[id] == 0) {
           inserted_into_pool_bs[id] = 1;
           best_L_nodes[l++] = nn;
+          occurrences[id] += 1;
         }
       } else {
         if (inserted_into_pool_rs.find(id) == inserted_into_pool_rs.end()) {
           inserted_into_pool_rs.insert(id);
           best_L_nodes[l++] = nn;
+          occurrences[id] += 1;
         }
       }
       if (l == Lsize)
@@ -1832,7 +1835,7 @@ namespace diskann {
   template<typename IdType>
   std::pair<uint32_t, uint32_t> Index<T, TagT>::search_impl(
       const T *query, const size_t K, const unsigned L, IdType *indices,
-      float *distances, InMemQueryScratch<T> &scratch) {
+      float *distances, InMemQueryScratch<T> &scratch, std::unordered_map<unsigned, int32_t> occurrences) {
     std::vector<Neighbor> &   expanded_nodes_info = scratch.pool();
     tsl::robin_set<unsigned> &expanded_nodes_ids = scratch.visited();
     std::vector<unsigned> &   des = scratch.des();
@@ -1859,7 +1862,7 @@ namespace diskann {
     auto retval = iterate_to_fixed_point(
         aligned_query, L, init_ids, expanded_nodes_info, expanded_nodes_ids,
         best_L_nodes, des, inserted_into_pool_rs, inserted_into_pool_bs, true,
-        true);
+        true, occurrences);
 
     size_t pos = 0;
     for (auto it : best_L_nodes) {
@@ -1922,7 +1925,7 @@ namespace diskann {
                                           const unsigned L, TagT *tags,
                                           float *           distances,
                                           _u32 *            return_indices,
-                                          std::vector<T *> &res_vectors) {
+                                          std::vector<T *> &res_vectors, std::unordered_map<unsigned, int32_t> occurrences) {
     ScratchStoreManager<T> manager(_query_scratch);
     auto                   scratch = manager.scratch_space();
 
@@ -1934,7 +1937,7 @@ namespace diskann {
     }
     _u32 * indices = scratch.indices;
     float *dist_interim = scratch.interim_dists;
-    search_impl(query, L, L, indices, dist_interim, scratch);
+    search_impl(query, L, L, indices, dist_interim, scratch, occurrences);
 
     std::shared_lock<std::shared_timed_mutex> ul(_update_lock);
     std::shared_lock<std::shared_timed_mutex> tl(_tag_lock);
@@ -2955,7 +2958,7 @@ namespace diskann {
   template<typename T, typename TagT>
   void Index<T, TagT>::search_with_optimized_layout(const T *query, size_t K,
                                                     size_t    L,
-                                                    unsigned *indices) {
+                                                    unsigned *indices, std::unordered_map<unsigned, int32_t> occurrences) {
     DistanceFastL2<T> *dist_fast = (DistanceFastL2<T> *) _distance;
 
     std::vector<Neighbor> retset(L + 1);
@@ -2988,6 +2991,8 @@ namespace diskann {
       unsigned id = init_ids[i];
       if (id >= _nd)
         continue;
+      // increase id frequency count here
+      occurrences[id] += 1;
       _mm_prefetch(_opt_graph + _node_size * id, _MM_HINT_T0);
     }
     L = 0;

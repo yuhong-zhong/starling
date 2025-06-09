@@ -171,7 +171,7 @@ namespace diskann {
     // For FastL2 search on optimized layout
     DISKANN_DLLEXPORT void search_with_optimized_layout(const T *query,
                                                         size_t K, size_t L,
-                                                        unsigned *indices);
+                                                        unsigned *indices, std::unordered_map<unsigned, int32_t> = {});
 
     // Added search overload that takes L as parameter, so that we
     // can customize L on a per-query basis without tampering with "Parameters"
@@ -185,7 +185,7 @@ namespace diskann {
                                               const unsigned L, TagT *tags,
                                               float *           distances,
                                               _u32 *            return_indices,
-                                              std::vector<T *> &res_vectors);
+                                              std::vector<T *> &res_vectors, std::unordered_map<unsigned, int32_t> = {});
 
     // The function will modify nbrs to contain all the nodes it can reach
     // after BFS
@@ -275,7 +275,7 @@ namespace diskann {
     std::pair<uint32_t, uint32_t> search_impl(const T *query, const size_t K,
                                               const unsigned L, IDType *indices,
                                               float *               distances,
-                                              InMemQueryScratch<T> &scratch);
+                                              InMemQueryScratch<T> &scratch, std::unordered_map<unsigned, int32_t> = {});
 
     std::pair<uint32_t, uint32_t> iterate_to_fixed_point(
         const T *node_coords, const unsigned Lindex,
@@ -285,7 +285,7 @@ namespace diskann {
         std::vector<Neighbor> &best_L_nodes, std::vector<unsigned> &des,
         tsl::robin_set<unsigned> &inserted_into_pool_rs,
         boost::dynamic_bitset<> &inserted_into_pool_bs, bool ret_frozen = true,
-        bool search_invocation = false);
+        bool search_invocation = false, std::unordered_map<unsigned, int32_t> = {});
 
     void get_expanded_nodes(const size_t node, const unsigned Lindex,
                             std::vector<unsigned>     init_ids,

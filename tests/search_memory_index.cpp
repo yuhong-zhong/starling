@@ -7,6 +7,7 @@
 #include <numeric>
 #include <omp.h>
 #include <set>
+#include <unordered_map>
 #include <string.h>
 #include <boost/program_options.hpp>
 
@@ -24,6 +25,29 @@
 
 namespace po = boost::program_options;
 
+std::vector<unsigned> get_top_k_keys(const std::unordered_map<unsigned, int>& occurrences, size_t k) {
+    using Entry = std::pair<int, unsigned>;  // (frequency, key)
+    auto cmp = [](const Entry& a, const Entry& b) { return a.first > b.first; };
+    std::priority_queue<Entry, std::vector<Entry>, decltype(cmp)> min_heap(cmp);
+
+    for (const auto& [key, freq] : occurrences) {
+        if (min_heap.size() < k) {
+            min_heap.emplace(freq, key);
+        } else if (freq > min_heap.top().first) {
+            min_heap.pop();
+            min_heap.emplace(freq, key);
+        }
+    }
+
+    std::vector<unsigned> result;
+    while (!min_heap.empty()) {
+        result.push_back(min_heap.top().second);
+        min_heap.pop();
+    }
+
+    return result;
+}
+
 template<typename T>
 int search_memory_index(diskann::Metric& metric, const std::string& index_path,
                         const std::string& result_path_prefix,
@@ -40,6 +64,7 @@ int search_memory_index(diskann::Metric& metric, const std::string& index_path,
   size_t    query_num, query_dim, query_aligned_dim, gt_num, gt_dim;
   diskann::load_aligned_bin<T>(query_file, query, query_num, query_dim,
                                query_aligned_dim);
+  std::unordered_map<unsigned, int32_t> occurrences;
 
   // Check for ground truth
   bool calc_recall_flag = false;
@@ -125,11 +150,11 @@ int search_memory_index(diskann::Metric& metric, const std::string& index_path,
       if (metric == diskann::FAST_L2) {
         index.search_with_optimized_layout(
             query + i * query_aligned_dim, recall_at, L,
-            query_result_ids[test_id].data() + i * recall_at);
+            query_result_ids[test_id].data() + i * recall_at, occurrences);
       } else if (tags) {
         index.search_with_tags(query + i * query_aligned_dim, recall_at, L,
                                query_result_tags.data() + i * recall_at,
-                               nullptr, nullptr, res);
+                               nullptr, nullptr, res, occurrences);
         for (int64_t r = 0; r < (int64_t) recall_at; r++) {
           query_result_ids[test_id][recall_at * i + r] =
               query_result_tags[recall_at * i + r];
@@ -204,8 +229,16 @@ int search_memory_index(diskann::Metric& metric, const std::string& index_path,
     test_id++;
   }
 
-  diskann::aligned_free(query);
+  int k;
+  std::string output_file;
+  std::vector<unsigned> points_to_cache = get_top_k_keys(occurrences, k);
+  std::ofstream file(output_file);
+  file << k;
+  for (auto point_id: points_to_cache) {
+    file << point_id;
+  }
 
+  diskann::aligned_free(query);
   return 0;
 }
 
