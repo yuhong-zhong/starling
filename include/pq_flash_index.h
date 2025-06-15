@@ -22,7 +22,7 @@
 
 #define MAX_GRAPH_DEGREE 512
 #define MAX_N_CMPS 16384
-#define SECTOR_LEN (_u64) 4096
+#define SECTOR_LEN (_u64) 8192
 #define MAX_N_SECTOR_READS 128
 #define MAX_PQ_CHUNKS 256
 
