@@ -56,10 +56,10 @@ GP_CUT=4096 # the graph's degree will been limited at 4096
 BM_LIST=(4)
 T_LIST=(8)
 CACHE=0 # diskann caching
-MEM_L=1 # non-zero to enable in-memory graph
+MEM_L=10000 # non-zero to enable in-memory graph
 
 # Page Search
-USE_PAGE_SEARCH=1 # Set 0 for beam search, 1 for page search (default)
+USE_PAGE_SEARCH=0 # Set 0 for beam search, 1 for page search (default)
 PS_USE_RATIO=1.0
 
 # KNN
