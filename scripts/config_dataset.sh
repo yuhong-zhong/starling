@@ -1,10 +1,6 @@
-#!/bin/sh
-
-# Switch dataset in the config_local.sh file by calling the desired function
-
 dataset_spacev1b_100m() {
-  BASE_PATH=/users/yuhong/nvme1n1/SPTAG/datasets/SPACEV1B/vectors.bin/vectors_merged.bin
-  QUERY_FILE=/users/yuhong/nvme1n1/SPTAG/datasets/SPACEV1B/query.bin
+  BASE_PATH=/mnt/sdb/vectors_merged.bin
+  QUERY_FILE=/mnt/sdb/query.bin
   GT_FILE=/users/yuhong/nvme1n1/SPTAG/datasets/SPACEV1B/truth_100m.bin
   PREFIX=spacev1b_100m
   DATA_TYPE=int8
@@ -13,6 +9,19 @@ dataset_spacev1b_100m() {
   K=10
   DATA_DIM=100
   DATA_N=100000000
+}
+
+dataset_chunked_linux() {
+  BASE_PATH=/mnt/sdb/dynamic_index/linux_datasets/float32_dataset_SFR-Embedding-Code-400M_chunked_linux.bin
+  QUERY_FILE=/mnt/sdb/dynamic_index/linux_datasets/float32_query_SFR-Embedding-Code-400M_chunked_linux.bin
+  GT_FILE=/mnt/sdb/dynamic_index/linux_datasets/float32_gt100_SFR-Embedding-Code-400M_chunked_linux.bin
+  PREFIX=chunked_linux
+  DATA_TYPE=float
+  DIST_FN=cosine
+  B=0.193  # 256B PQ compression
+  K=10
+  DATA_DIM=1024
+  DATA_N=808908
 }
 
 #################

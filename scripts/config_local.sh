@@ -3,7 +3,7 @@ source config_dataset.sh
 
 # Choose the dataset by uncomment the line below
 # If multiple lines are uncommented, only the last dataset is effective
-dataset_spacev1b_100m
+dataset_chunked_linux
 
 ##################
 #   Disk Build   #
