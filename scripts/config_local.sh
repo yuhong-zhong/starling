@@ -27,6 +27,7 @@ MEM_ALPHA=1.2
 MEM_RAND_SAMPLING_RATE=0.01  # randomly sample 1% to construct in-memory graph
 MEM_USE_FREQ=0
 MEM_FREQ_USE_RATE=0.01
+DYNAMIC=1
 
 ##########################
 #   Generate Frequency   #

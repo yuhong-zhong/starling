@@ -83,6 +83,10 @@ case $2 in
       time ${EXE_PATH}/tests/utils/gen_random_slice $DATA_TYPE $BASE_PATH $MEM_SAMPLE_PATH $MEM_RAND_SAMPLING_RATE > ${MEM_SAMPLE_PATH}sample.log
       MEM_DATA_PATH=${MEM_SAMPLE_PATH}
     fi
+
+    if [ ${DYNAMIC} -eq 1 ]; then
+      MEM_DATA_PATH="/mnt/sdb/dynamic_index/linux_datasets/ground_truth_only/lfu_gt_0_8089";
+    fi
     echo "Building memory index..."
     check_dir_and_make_if_absent ${MEM_INDEX_PATH}
     time ${EXE_PATH}/tests/build_memory_index \
