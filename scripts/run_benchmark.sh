@@ -159,8 +159,6 @@ case $2 in
     cp ${GP_FILE_PATH} ${INDEX_PREFIX_PATH}_partition.bin
   ;;
   search)
-    mkdir -p ${INDEX_PREFIX_PATH}/search
-    mkdir -p ${INDEX_PREFIX_PATH}/result
     if [ ! -d "$INDEX_PREFIX_PATH" ]; then
       echo "Directory $INDEX_PREFIX_PATH is not exist. Build it first?"
       exit 1
@@ -258,6 +256,101 @@ case $2 in
         cat $f | grep -E "([0-9]+(\.[0-9]+\s+)){5,}" | tee -a $SUMMARY_FILE_PATH
         printf "\n\n" >> $SUMMARY_FILE_PATH
       done
+    fi
+  ;;
+  *)
+    print_usage_and_exit
+  ;;
+  search_dynamic)
+    if [ ! -d "$INDEX_PREFIX_PATH" ]; then
+      echo "Directory $INDEX_PREFIX_PATH is not exist. Build it first?"
+      exit 1
+    fi
+
+    # choose the disk index file by settings
+    DISK_FILE_PATH=${INDEX_PREFIX_PATH}_disk.index
+    if [ $USE_PAGE_SEARCH -eq 1 ]; then
+      if [ ! -f ${INDEX_PREFIX_PATH}_partition.bin ]; then
+        echo "Partition file not found. Run the script with gp option first."
+        exit 1
+      fi
+      echo "Using Page Search"
+    else
+      OLD_INDEX_FILE=${INDEX_PREFIX_PATH}_disk_beam_search.index
+      if [ -f ${OLD_INDEX_FILE} ]; then
+        DISK_FILE_PATH=$OLD_INDEX_FILE
+      else
+        echo "make sure you have not gp the index file"
+      fi
+      echo "Using Beam Search"
+    fi
+
+    log_arr=()
+    case $3 in
+      knn)
+        for BW in ${BM_LIST[@]}
+        do
+          for T in ${T_LIST[@]}
+          do
+            SEARCH_LOG=${INDEX_PREFIX_PATH}search/search_SQ${USE_SQ}_K${K}_CACHE${CACHE}_BW${BW}_T${T}_MEML${MEM_L}_MEMK${MEM_TOPK}_MEM_USE_FREQ${MEM_USE_FREQ}_PS${USE_PAGE_SEARCH}_USE_RATIO${PS_USE_RATIO}_GP_USE_FREQ{$GP_USE_FREQ}_GP_LOCK_NUMS${GP_LOCK_NUMS}_GP_CUT${GP_CUT}.log
+            echo "Searching... log file: ${SEARCH_LOG}"
+            sync; echo 3 | sudo tee /proc/sys/vm/drop_caches; ${EXE_PATH}/tests/search_disk_dynamic_index --data_type $DATA_TYPE \
+              --dist_fn $DIST_FN \
+              --index_path_prefix $INDEX_PREFIX_PATH \
+              --query_file $QUERY_FILE \
+              --gt_file $GT_FILE \
+              -K $K \
+              --result_path ${INDEX_PREFIX_PATH}result/result \
+              --num_nodes_to_cache $CACHE \
+              -T $T \
+              -L ${LS} \
+              -W $BW \
+              --mem_L ${MEM_L} \
+              --mem_index_path ${MEM_INDEX_PATH}_index \
+              --use_page_search ${USE_PAGE_SEARCH} \
+              --use_ratio ${PS_USE_RATIO} \
+              --disk_file_path ${DISK_FILE_PATH} \
+              --use_sq ${USE_SQ} \
+              --num_intervals ${NUM_INTERVALS} > ${SEARCH_LOG} 
+            log_arr+=( ${SEARCH_LOG} )
+          done
+        done
+      ;;
+      range)
+        for BW in ${BM_LIST[@]}
+        do
+          for T in ${T_LIST[@]}
+          do
+            SEARCH_LOG=${INDEX_PREFIX_PATH}search/search_RADIUS${RADIUS}_CACHE${CACHE}_BW${BW}_T${T}_PS${USE_PAGE_SEARCH}_PS_RATIO${PS_USE_RATIO}_ITER_KNN${RS_ITER_KNN_TO_RANGE_SEARCH}_MEM_L${MEM_L}.log
+            echo "Searching... log file: ${SEARCH_LOG}"
+            sync; echo 3 | sudo tee /proc/sys/vm/drop_caches; ${EXE_PATH}/tests/range_search_disk_index \
+              --data_type $DATA_TYPE \
+              --dist_fn $DIST_FN \
+              --index_path_prefix $INDEX_PREFIX_PATH \
+              --num_nodes_to_cache $CACHE \
+              -T $T \
+              -W $BW \
+              --query_file $QUERY_FILE \
+              --gt_file $GT_FILE \
+              --range_threshold $RADIUS \
+              -L $RS_LS \
+              --disk_file_path ${DISK_FILE_PATH} \
+              --use_page_search ${USE_PAGE_SEARCH} \
+              --iter_knn_to_range_search ${RS_ITER_KNN_TO_RANGE_SEARCH} \
+              --use_ratio ${PS_USE_RATIO} \
+              --mem_index_path ${MEM_INDEX_PATH}_index \
+              --mem_L ${MEM_L} \
+              --custom_round_num ${RS_CUSTOM_ROUND} \
+              --kicked_size ${KICKED_SIZE} \
+              > ${SEARCH_LOG}
+            log_arr+=( ${SEARCH_LOG} )
+          done
+        done
+      ;;
+      *)
+        print_usage_and_exit
+      ;;
+    esac
     fi
   ;;
   *)
